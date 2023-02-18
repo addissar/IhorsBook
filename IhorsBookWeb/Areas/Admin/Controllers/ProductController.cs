@@ -1,7 +1,10 @@
 ﻿using IhorsBook.DataAccess;
 using IhorsBook.DataAccess.Repository.IRepository;
 using IhorsBook.Models;
+using IhorsBook.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
 
 namespace IhorsBookWeb.Controllers;
 [Area("Admin")]
@@ -21,83 +24,79 @@ namespace IhorsBookWeb.Controllers;
             return View(objCoverTypeList);
         }
         //GET
-        public IActionResult Create()
+        public IActionResult Upsert(int? id)
         {
-            return View();
-        }
-        //POST
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(CoverType obj)
+        ProductVM productVM = new()
         {
-            if (ModelState.IsValid)
+            Product = new(),
+            CategoryList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
             {
-             _unitOfWork.CoverType.Add(obj);
-             _unitOfWork.Save();
-            TempData["success"] = "CoverType created successfully";
-            return RedirectToAction("Index");
-            }
-            return View(obj);
-        }
+                Text = i.Name,
+                Value = i.Id.ToString()
+            }),
+            CoverTypeList = _unitOfWork.CoverType.GetAll().Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            }),
+        };
 
-        //GET
-        public IActionResult Edit(int? id)
-        {
-            if(id == null || id == 0)
-            {
-                return NotFound();
-            }
-            var CoverTypeFromDbFirst = _unitOfWork.CoverType.GetFirstOrDefault(u=>u.Id==id);
-
-            if(CoverTypeFromDbFirst == null)
-            {
-                return NotFound();
-            }
-            return View(CoverTypeFromDbFirst);
-        }
-        //POST
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(CoverType obj)
-        {
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.CoverType.Update(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "CoverType updated successfully";
-                return RedirectToAction("Index");
-            }
-            return View(obj);
-        }
-        //GET
-        public IActionResult Delete(int? id)
-        {
             if (id == null || id == 0)
             {
-                return NotFound();
+                //create product
+                //ViewBag.CategoryList = CategoryList;
+                //ViewData["CoverTypeList"] = CoverTypeList;
+                return View(productVM);
             }
-            var CoverTypeFromDbFirst = _unitOfWork.CoverType.GetFirstOrDefault(u=>u.Id==id);
+            else
+            {
+                //update product
+            }
+                return View(productVM);
+            }
+            //POST
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public IActionResult Upsert(CoverType obj)
+            {
+                if (ModelState.IsValid)
+                {
+                    _unitOfWork.CoverType.Update(obj);
+                    _unitOfWork.Save();
+                    TempData["success"] = "CoverType updated successfully";
+                    return RedirectToAction("Index");
+                }
+                return View(obj);
+            }
+            //GET
+            public IActionResult Delete(int? id)
+            {
+                if (id == null || id == 0)
+                {
+                    return NotFound();
+                }
+                var CoverTypeFromDbFirst = _unitOfWork.CoverType.GetFirstOrDefault(u=>u.Id==id);
 
-            if (CoverTypeFromDbFirst == null)
+                if (CoverTypeFromDbFirst == null)
+                {
+                    return NotFound();
+                }
+                return View(CoverTypeFromDbFirst);
+            }
+            //POST
+            [HttpPost, ActionName("Delete")]
+            [ValidateAntiForgeryToken]
+            public IActionResult DeletePOST(int? id)
             {
-                return NotFound();
-            }
-            return View(CoverTypeFromDbFirst);
-        }
-        //POST
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(int? id)
-        {
-            var obj = _unitOfWork.CoverType.GetFirstOrDefault(u => u.Id == id);
-            if (obj == null)
-            {
-                return NotFound();
-            }
-            _unitOfWork.CoverType.Remove(obj);
-            _unitOfWork.Save();
-            TempData["success"] = "CoverType deleted successfully";
-            return RedirectToAction("Index");
-            }
+                var obj = _unitOfWork.CoverType.GetFirstOrDefault(u => u.Id == id);
+                if (obj == null)
+                {
+                    return NotFound();
+                }
+                _unitOfWork.CoverType.Remove(obj);
+                _unitOfWork.Save();
+                TempData["success"] = "CoverType deleted successfully";
+                return RedirectToAction("Index");
+                }
     }
 
