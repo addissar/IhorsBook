@@ -1,7 +1,7 @@
-﻿using IhorsBookWeb.Models;
+﻿using IhorsBook.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace IhorsBookWeb.Data
+namespace IhorsBook.DataAccess
 {
     public class ApplicationDbContext: DbContext
     {
