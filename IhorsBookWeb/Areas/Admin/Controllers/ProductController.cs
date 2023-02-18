@@ -25,8 +25,9 @@ namespace IhorsBookWeb.Controllers;
 
         public IActionResult Index()
         {
-            IEnumerable<CoverType> objCoverTypeList = _unitOfWork.CoverType.GetAll();
-            return View(objCoverTypeList);
+            //IEnumerable<CoverType> objCoverTypeList = _unitOfWork.CoverType.GetAll();
+            //return View(objCoverTypeList);
+            return View();
         }
         //GET
         public IActionResult Upsert(int? id)
@@ -116,5 +117,13 @@ namespace IhorsBookWeb.Controllers;
             TempData["success"] = "CoverType deleted successfully";
             return RedirectToAction("Index");
             }
+    #region API CALLS
+    [HttpGet]
+    public IActionResult GetAll()
+    {
+        var productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+        return Json(new { data = productList });
     }
+    #endregion
+}
 
