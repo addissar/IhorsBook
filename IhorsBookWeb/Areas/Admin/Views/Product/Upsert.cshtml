@@ -49,12 +49,13 @@
 		</div>
 		<div class="mb-3">
 			<label asp-for="Product.ImageUrl"></label>
-			<input type = "file" id = "uploadBox" class="form-control" />
+			<input type = "file" id = "uploadBox" name = "file" class="form-control" />
 		</div>
 		<div class="mb-3 col-6">
 			<label asp-for="Product.CategoryId"></label>
-			<select asp-for = "Product.CategoryId" asp-items = "@Model.CategoryList" class = "form-select"></select>
-			<option disabled selected>--Select Category--</option>
+			<select asp-for = "Product.CategoryId" asp-items ="@Model.CategoryList" class = "form-select">
+				<option disabled selected>--Select Category--</option>
+			</select>
 			<span asp-validation-for="Product.CategoryId" class="text-danger"></span>
 		</div>
 		<div class="mb-3 col-6">
