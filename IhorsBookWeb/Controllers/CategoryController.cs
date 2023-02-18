@@ -1,5 +1,5 @@
-﻿using IhorsBookWeb.Data;
-using IhorsBookWeb.Models;
+﻿using IhorsBook.DataAccess;
+using IhorsBook.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IhorsBookWeb.Controllers

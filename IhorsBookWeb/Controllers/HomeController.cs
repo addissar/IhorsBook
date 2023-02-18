@@ -1,4 +1,5 @@
-﻿using IhorsBookWeb.Models;
+﻿using IhorsBook.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
