@@ -3,8 +3,9 @@ using IhorsBook.DataAccess.Repository.IRepository;
 using IhorsBook.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IhorsBookWeb.Controllers
-{
+namespace IhorsBookWeb.Controllers;
+[Area("Admin")]
+
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -111,4 +112,4 @@ namespace IhorsBookWeb.Controllers
             return RedirectToAction("Index");
             }
     }
-}
+
