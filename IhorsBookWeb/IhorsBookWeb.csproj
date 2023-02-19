@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IhorsBook.DataAccess\IhorsBook.DataAccess.csproj" />
+    <ProjectReference Include="..\IhorsBook.Utility\IhorsBook.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>
