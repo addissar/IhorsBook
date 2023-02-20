@@ -8,11 +8,13 @@ using IhorsBook.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
+using IhorsBook.Utility;
 
 namespace IhorsBookWeb.Controllers;
 [Area("Admin")]
-
-    public class ProductController : Controller
+[Authorize(Roles = SD.Role_Admin)]
+public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _hostEnvironment;

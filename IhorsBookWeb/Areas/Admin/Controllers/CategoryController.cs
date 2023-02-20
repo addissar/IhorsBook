@@ -1,10 +1,13 @@
 ﻿using IhorsBook.DataAccess;
 using IhorsBook.DataAccess.Repository.IRepository;
 using IhorsBook.Models;
+using IhorsBook.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IhorsBookWeb.Controllers;
 [Area("Admin")]
+[Authorize(Roles = SD.Role_Admin)]
 
     public class CategoryController : Controller
     {
