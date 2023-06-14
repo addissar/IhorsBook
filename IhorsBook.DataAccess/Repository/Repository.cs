@@ -16,7 +16,7 @@ namespace IhorsBook.DataAccess.Repository
         public Repository(ApplicationDbContext db)
         {
             _db = db;
-            //_db.Products.Include(u => u.Category).Include(u=>u.CoverType);
+            _db.Products.Include(u => u.Category).Include(u=>u.CoverType);
             this.dbSet = _db.Set<T>();
         }
         public void Add(T entity)
