@@ -2,6 +2,8 @@
 
 namespace IhorsBookWeb.Areas.Customer.Controllers
 {
+    [Area("Customer")]
+
     public class CookiePolicyController : Controller
     {
         public IActionResult Index()
