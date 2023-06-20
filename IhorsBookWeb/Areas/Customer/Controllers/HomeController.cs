@@ -7,6 +7,7 @@ using IhorsBook.DataAccess.Repository.IRepository;
 using IhorsBook.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace IhorsBookWeb.Controllers;
 [Area("Customer")]
@@ -20,12 +21,23 @@ public class HomeController : Controller
         _logger = logger;
         _unitOfWork = unitOfWork;
     }
-
-    public IActionResult Index()
+	[HttpGet]
+	public IActionResult Index(string searchString)
     {
-        IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+        ViewData["currentFilter"] = searchString;
 
-        return View(productList);
+        var li = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+
+		if (!String.IsNullOrEmpty(searchString))
+        {
+            li = li.Where(s => s.Title.Contains(searchString)
+                            || s.Author.Contains(searchString)
+                            || s.Category.Name.Contains(searchString)
+						 );
+        }
+        //IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType"); // .Where(x => x.Title.Equals())
+
+		return View(li);
     }
     public IActionResult Details(int productId)
     {
@@ -72,4 +84,15 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+	[HttpPost]
+	public IActionResult Search(string searchQuery)
+	{
+		var results = _unitOfWork.Product
+			.GetAll(e => e.Title.Contains(searchQuery))
+			.ToList();
+
+		// Pass the search results to the view
+		return View(results);
+	}
 }
