@@ -22,22 +22,36 @@ public class HomeController : Controller
         _unitOfWork = unitOfWork;
     }
 	[HttpGet]
-	public IActionResult Index(string searchString)
+	public IActionResult Index(string searchString, int? category, int? cover)
     {
         ViewData["currentFilter"] = searchString;
 
-        var li = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+		var categories = _unitOfWork.Category.GetAll();
+		ViewData["Categories"] = categories;
+
+		var covers = _unitOfWork.CoverType.GetAll();
+		ViewData["Covers"] = covers;
+
+		var productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
 
 		if (!String.IsNullOrEmpty(searchString))
         {
-            li = li.Where(s => s.Title.Contains(searchString)
+            productList = productList.Where(s => s.Title.Contains(searchString)
                             || s.Author.Contains(searchString)
                             || s.Category.Name.Contains(searchString)
 						 );
         }
-        //IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType"); // .Where(x => x.Title.Equals())
+        else if( category != null)
+        {
+            productList = productList.Where(s => s.CategoryId == category);
 
-		return View(li);
+		}
+        else if(cover != null)
+        {
+            productList = productList.Where(s => s.CoverTypeId == cover);
+        }
+
+		return View(productList);
     }
     public IActionResult Details(int productId)
     {
