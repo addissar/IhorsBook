@@ -7,6 +7,7 @@ using IhorsBook.DataAccess.Repository.IRepository;
 using IhorsBook.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace IhorsBookWeb.Controllers;
 [Area("Customer")]
@@ -20,12 +21,37 @@ public class HomeController : Controller
         _logger = logger;
         _unitOfWork = unitOfWork;
     }
-
-    public IActionResult Index()
+	[HttpGet]
+	public IActionResult Index(string searchString, int? category, int? cover)
     {
-        IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+        ViewData["currentFilter"] = searchString;
 
-        return View(productList);
+		var categories = _unitOfWork.Category.GetAll();
+		ViewData["Categories"] = categories;
+
+		var covers = _unitOfWork.CoverType.GetAll();
+		ViewData["Covers"] = covers;
+
+		var productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+
+		if (!String.IsNullOrEmpty(searchString))
+        {
+            productList = productList.Where(s => s.Title.Contains(searchString)
+                            || s.Author.Contains(searchString)
+                            || s.Category.Name.Contains(searchString)
+						 );
+        }
+        else if( category != null)
+        {
+            productList = productList.Where(s => s.CategoryId == category);
+
+		}
+        else if(cover != null)
+        {
+            productList = productList.Where(s => s.CoverTypeId == cover);
+        }
+
+		return View(productList);
     }
     public IActionResult Details(int productId)
     {
@@ -72,4 +98,15 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+	[HttpPost]
+	public IActionResult Search(string searchQuery)
+	{
+		var results = _unitOfWork.Product
+			.GetAll(e => e.Title.Contains(searchQuery))
+			.ToList();
+
+		// Pass the search results to the view
+		return View(results);
+	}
 }
